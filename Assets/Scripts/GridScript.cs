@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class GridScript : MonoBehaviour
 {
@@ -22,12 +23,24 @@ public class GridScript : MonoBehaviour
     private Vector2 goalLocation = new Vector2(9, 19);
     [SerializeField]
     private Vector2[] redLocations = new Vector2[]{new Vector2(1,0),new Vector2(2,0)};
+
     
+
 
     // Start is called before the first frame update
     void Start()
     {
         CreateGrid();
+
+    }
+    private void WriteToFile()
+    {
+        PlayerPrefs.SetString("Goal", goal.ToString());
+        for(int i = 0; i < redSpaces.Count; i++)
+        {
+            PlayerPrefs.SetString("Red:", redSpaces[i].ToString());
+        }
+
     }
 
     private void CreateGrid()
@@ -91,7 +104,7 @@ public class GridScript : MonoBehaviour
         setRedSpace(3, 16);
         setRedSpace(1, 17);
         setRedSpace(9, 18);
-        setGoal((int)goalLocation.x, (int)goalLocation.y);
+        //setGoal((int)goalLocation.x, (int)goalLocation.y);
         foreach(Vector2 v in redLocations)
         {
             setRedSpace((int)v.x, (int)v.y);
@@ -101,6 +114,7 @@ public class GridScript : MonoBehaviour
         setGoal(9, 19);
         setRedSpace(1, 0);
         setRedSpace(2, 0);
+        WriteToFile();
     }
 
     private void setRedSpace(int x, int y)

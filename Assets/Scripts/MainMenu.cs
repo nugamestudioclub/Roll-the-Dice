@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class MainMenu : MonoBehaviour
 {
@@ -20,6 +21,12 @@ public class MainMenu : MonoBehaviour
     [SerializeField]
     private Button startbtn2;
 
+    [SerializeField]
+    private SimpleLevel[] levelsData;
+    private int levelCount;
+
+    public GameObject blockPref;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +35,8 @@ public class MainMenu : MonoBehaviour
         levelSelectBtn.onClick.AddListener(switchToSelect);
         mainCanvas.gameObject.SetActive(true);
         levelSelect.gameObject.SetActive(false);
+        nextlevelSelect.onClick.AddListener(SelRight);
+        prevlevelSelect.onClick.AddListener(SelLeft);
     }
     void loadLevelOne()
     {
@@ -35,7 +44,20 @@ public class MainMenu : MonoBehaviour
     }
     void loadCustomlevel()
     {
+        SceneManager.LoadScene("Level" + (levelCount + 1));
+    }
 
+    void SelLeft()
+    {
+        levelCount = (levelCount + 1) % (levelsData.Length);
+    }
+    void SelRight()
+    {
+        if (levelCount == 0)
+        {
+            levelCount = levelsData.Length + 1;
+        }
+        levelCount = (levelCount - 1) % (levelsData.Length);
     }
     void switchToSelect()
     {
@@ -56,4 +78,13 @@ public class MainMenu : MonoBehaviour
     {
         
     }
+}
+
+[System.Serializable]
+public struct SimpleLevel
+{
+    public string name;
+    public Vector2 goal;
+    public Vector2[] reds;
+    public Vector2[] blocks;
 }

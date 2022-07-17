@@ -28,6 +28,7 @@ public class CellScript : MonoBehaviour
         } else if (goal)
         {
             // win game
+            SceneManager.LoadScene("EndScene");
             Debug.Log("you win");
         }
     }

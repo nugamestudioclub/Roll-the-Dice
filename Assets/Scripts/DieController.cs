@@ -22,10 +22,10 @@ public class DieController : MonoBehaviour
     {
         if (!flipping)
         {
-            if (Input.GetKey(KeyCode.W)) StartCoroutine(Flip(Vector3.forward, 1, true));
-            else if (Input.GetKey(KeyCode.A)) StartCoroutine(Flip(Vector3.left, 1, true));
-            else if (Input.GetKey(KeyCode.S)) StartCoroutine(Flip(Vector3.back, 1, true));
-            else if (Input.GetKey(KeyCode.D)) StartCoroutine(Flip(Vector3.right, 1, true));
+            if (Input.GetKey(KeyCode.W)) StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
+            else if (Input.GetKey(KeyCode.A)) StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
+            else if (Input.GetKey(KeyCode.S)) StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
+            else if (Input.GetKey(KeyCode.D)) StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
         }
     }
 
@@ -46,6 +46,9 @@ public class DieController : MonoBehaviour
                 remainingAngle -= rotationAngle;
                 yield return null;
             }
+
+            CorrectPosition();
+            yield return new WaitForSeconds(.2f);
         }
 
         int rollNum = FindFaceUp();
@@ -68,6 +71,11 @@ public class DieController : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         StartCoroutine(Flip(dir, rollNum, firstMove));
+    }
+
+    private void CorrectPosition()
+    {
+        transform.position = new Vector3(Mathf.Round(transform.position.x * 2) / 2, 0.5f, Mathf.Round(transform.position.z * 2) / 2);
     }
 
     private int FindFaceUp()
@@ -106,12 +114,34 @@ public class DieController : MonoBehaviour
 
     private void DisplayText(string text)
     {
+        if (textPrefab == null)
+        {
+            Debug.LogError("No text prefab provided");
+        }
+
         GameObject textObject = Instantiate(textPrefab, transform.position, Quaternion.identity);
-        Debug.Log(textObject.transform.childCount);
         TextMesh mesh = textObject.transform.GetChild(0).GetComponent<TextMesh>();
         mesh.text = text;
 
         textObject.GetComponent<Animator>().Play("displayText");
         Destroy(textObject, 1.5f);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Respawn"))
+        {
+            Respawn();
+        }
+    }
+
+    public void Respawn()
+    {
+        StopAllCoroutines();
+        rb.velocity = Vector3.zero;
+        transform.position = new Vector3(0.5f, 0.5f, 0.5f);
+        transform.rotation = Quaternion.identity;
+        flipping = false;
+        GameObject.Find("Camera Rotator").transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 }

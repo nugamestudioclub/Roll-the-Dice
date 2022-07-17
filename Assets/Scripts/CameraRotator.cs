@@ -25,11 +25,11 @@ public class CameraRotator : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                StartCoroutine(Rotate(90));
+                StartCoroutine(Rotate(-90));
             }
             else if (Input.GetKey(KeyCode.LeftArrow))
             {
-                StartCoroutine(Rotate(-90));
+                StartCoroutine(Rotate(90));
             }
         }
     }

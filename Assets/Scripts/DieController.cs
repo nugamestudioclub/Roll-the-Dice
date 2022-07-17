@@ -110,8 +110,6 @@ public class DieController : MonoBehaviour
         Debug.Log(textObject.transform.childCount);
         TextMesh mesh = textObject.transform.GetChild(0).GetComponent<TextMesh>();
         mesh.text = text;
-        textObject.transform.SetSiblingIndex(0);
-        textObject.transform.rotation = Camera.main.transform.rotation;
 
         textObject.GetComponent<Animator>().Play("displayText");
         Destroy(textObject, 1.5f);

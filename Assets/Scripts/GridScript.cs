@@ -76,7 +76,6 @@ public class GridScript : MonoBehaviour
 
     private void configureGrid()
     {
-        setGoal(9, 19);
 
         setRedSpace(1, 1);
         setRedSpace(5, 3);
@@ -99,6 +98,9 @@ public class GridScript : MonoBehaviour
         }
         //setRedSpace(1, 0);
         //setRedSpace(2, 0);
+        setGoal(9, 19);
+        setRedSpace(1, 0);
+        setRedSpace(2, 0);
     }
 
     private void setRedSpace(int x, int y)

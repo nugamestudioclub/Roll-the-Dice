@@ -25,10 +25,9 @@ public class DieController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bool cameraMoving = Camera.main.transform.parent.GetComponent<CameraRotator>().rotating;
         
         float rotationZ = 0;
-        if (!flipping && !cameraMoving)
+        if (!flipping)
         {
             
 

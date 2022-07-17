@@ -8,7 +8,7 @@ public class CameraRotator : MonoBehaviour
     private GameObject die;
     [SerializeField]
     private float rotationSpeed = 10;
-    private bool rotating;
+    public bool rotating;
 
     // Start is called before the first frame update
     void Start()

@@ -112,8 +112,7 @@ public class GridScript : MonoBehaviour
         //setRedSpace(1, 0);
         //setRedSpace(2, 0);
         setGoal(9, 19);
-        setRedSpace(1, 0);
-        setRedSpace(2, 0);
+
         WriteToFile();
     }
 

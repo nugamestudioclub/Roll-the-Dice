@@ -76,7 +76,22 @@ public class GridScript : MonoBehaviour
 
     private void configureGrid()
     {
+        setGoal(9, 19);
 
+        setRedSpace(1, 1);
+        setRedSpace(5, 3);
+        setRedSpace(9, 3);
+        setRedSpace(0, 7);
+        setRedSpace(9, 8);
+        setRedSpace(1, 9);
+        setRedSpace(3, 9);
+        setRedSpace(5, 10);
+        setRedSpace(6, 12);
+        setRedSpace(6, 14);
+        setRedSpace(4, 16);
+        setRedSpace(3, 16);
+        setRedSpace(1, 17);
+        setRedSpace(9, 18);
         setGoal((int)goalLocation.x, (int)goalLocation.y);
         foreach(Vector2 v in redLocations)
         {

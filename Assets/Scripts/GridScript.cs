@@ -18,6 +18,12 @@ public class GridScript : MonoBehaviour
     private ArrayList redSpaces;
     private Vector2Int goal;
 
+    [SerializeField]
+    private Vector2 goalLocation = new Vector2(9, 19);
+    [SerializeField]
+    private Vector2[] redLocations = new Vector2[]{new Vector2(1,0),new Vector2(2,0)};
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -71,9 +77,13 @@ public class GridScript : MonoBehaviour
     private void configureGrid()
     {
 
-        setGoal(9, 19);
-        setRedSpace(1, 0);
-        setRedSpace(2, 0);
+        setGoal((int)goalLocation.x, (int)goalLocation.y);
+        foreach(Vector2 v in redLocations)
+        {
+            setRedSpace((int)v.x, (int)v.y);
+        }
+        //setRedSpace(1, 0);
+        //setRedSpace(2, 0);
     }
 
     private void setRedSpace(int x, int y)

@@ -9,23 +9,72 @@ public class DieController : MonoBehaviour
     private Rigidbody rb;
     private bool flipping;
     private Dictionary<Vector3, int> sides;
+    private DiceFollower pointer;
+    Vector3 direction;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         flipping = false;
+        pointer = GameObject.FindObjectOfType<DiceFollower>();
+        direction= pointer.transform.forward; ;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+        float rotationZ = 0;
         if (!flipping)
         {
-            if (Input.GetKey(KeyCode.W)) StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
-            else if (Input.GetKey(KeyCode.A)) StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
-            else if (Input.GetKey(KeyCode.S)) StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
-            else if (Input.GetKey(KeyCode.D)) StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
+            
+
+            if (Input.GetKey(KeyCode.W))
+            {
+                StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
+                direction = Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up);
+                print(direction);
+                
+               
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
+                direction = -Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up);
+                print(direction);
+                
+                
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
+                direction = -Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up);
+                print(direction);
+                
+                
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
+                direction = Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up);
+                print(direction);
+                
+                
+            }
+        }
+
+        RaycastHit hit;
+        float distToWall = Mathf.Infinity;
+        
+        if (Physics.Raycast(transform.position, direction, out hit))
+        {
+            distToWall = Vector3.Distance(transform.position, hit.point);
+            //print(distToWall);
+            if (distToWall <= 0.5)
+            {
+                Stop();
+            }
         }
     }
 
@@ -143,5 +192,13 @@ public class DieController : MonoBehaviour
         transform.rotation = Quaternion.identity;
         flipping = false;
         GameObject.Find("Camera Rotator").transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+    public void Stop()
+    {
+        StopAllCoroutines();
+        Transform rotator = GameObject.Find("Camera Rotator").transform;
+        transform.position = new Vector3(((int)transform.position.x) + 0.5f, ((int)transform.position.y) + 0.5f, ((int)transform.position.z) + 0.5f);
+        rotator.eulerAngles = new Vector3((int)rotator.eulerAngles.x, (int)rotator.eulerAngles.y, (int)rotator.eulerAngles.z);
+        flipping = false;
     }
 }

@@ -11,6 +11,7 @@ public class DieController : MonoBehaviour
     private Dictionary<Vector3, int> sides;
     private DiceFollower pointer;
     Vector3 direction;
+    float distToWall = Mathf.Infinity;
 
     // Start is called before the first frame update
     void Start()
@@ -32,32 +33,41 @@ public class DieController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.W))
             {
-                StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
                 direction = Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up);
+                print(CheckWalls(direction));
+                if (CheckWalls(direction))
+                    StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
+                
                 print(direction);
                 
                
             }
             else if (Input.GetKey(KeyCode.A))
             {
-                StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
                 direction = -Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up);
+                if (CheckWalls(direction))
+                    StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
+                
                 print(direction);
                 
                 
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
                 direction = -Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up);
+                if (CheckWalls(direction))
+                    StartCoroutine(Flip(-Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up), 1, true));
+                
                 print(direction);
                 
                 
             }
             else if (Input.GetKey(KeyCode.D))
             {
-                StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
                 direction = Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up);
+                if (CheckWalls(direction))
+                    StartCoroutine(Flip(Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up), 1, true));
+               
                 print(direction);
                 
                 
@@ -65,7 +75,7 @@ public class DieController : MonoBehaviour
         }
 
         RaycastHit hit;
-        float distToWall = Mathf.Infinity;
+        
         
         if (Physics.Raycast(transform.position, direction, out hit))
         {
@@ -77,9 +87,31 @@ public class DieController : MonoBehaviour
             }
         }
     }
+    bool CheckWalls(Vector3 direction)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, direction, out hit))
+        {
+            distToWall = Vector3.Distance(transform.position, hit.point);
+            //print(distToWall);
+            if (distToWall <= 0.8)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
 
     private IEnumerator Flip(Vector3 dir, int amt, bool firstMove)
     {
+        
         flipping = true;
 
         for (int i = 0; i < amt; i++)

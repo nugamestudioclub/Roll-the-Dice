@@ -20,14 +20,14 @@ public class DieController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         flipping = false;
         pointer = GameObject.FindObjectOfType<DiceFollower>();
-        direction= pointer.transform.forward; ;
+        direction = pointer.transform.forward;
+        ConfigureSides();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         bool rotating = Camera.main.transform.parent.GetComponent<CameraRotator>().rotating;
-        float rotationZ = 0;
 
         if (!flipping && !rotating)
         {
@@ -113,40 +113,46 @@ public class DieController : MonoBehaviour
 
     private IEnumerator Flip(Vector3 dir, int amt, bool firstMove)
     {
-        
-        flipping = true;
-
-        for (int i = 0; i < amt; i++)
+        if (CheckWalls(dir))
         {
-            float remainingAngle = 90;
-            Vector3 rotationCenter = transform.position + dir / 2 + Vector3.down / 2;
-            Vector3 rotationAxis = Vector3.Cross(Vector3.up, dir);
+            flipping = true;
 
-            while (remainingAngle > 0)
+            for (int i = 0; i < amt; i++)
             {
-                float rotationAngle = Mathf.Min(Time.deltaTime * 300, remainingAngle);
-                transform.RotateAround(rotationCenter, rotationAxis, rotationAngle);
-                remainingAngle -= rotationAngle;
-                yield return null;
+                float remainingAngle = 90;
+                Vector3 rotationCenter = transform.position + dir / 2 + Vector3.down / 2;
+                Vector3 rotationAxis = Vector3.Cross(Vector3.up, dir);
+
+                while (remainingAngle > 0)
+                {
+                    float rotationAngle = Mathf.Min(Time.deltaTime * 300, remainingAngle);
+                    transform.RotateAround(rotationCenter, rotationAxis, rotationAngle);
+                    remainingAngle -= rotationAngle;
+                    yield return null;
+                }
+
+                CorrectPosition();
+                yield return new WaitForSeconds(.2f);
             }
 
-            CorrectPosition();
-            yield return new WaitForSeconds(.2f);
-        }
+            int rollNum = FindFaceUp();
 
-        int rollNum = FindFaceUp();
-
-        if (firstMove)
-        {
-            if (textPrefab)
+            if (firstMove)
             {
-                DisplayText(rollNum.ToString());
-            }
+                if (textPrefab)
+                {
+                    DisplayText(rollNum.ToString());
+                }
 
-            StartCoroutine(FlipDelay(dir, rollNum, false));
+                StartCoroutine(FlipDelay(dir, rollNum, false));
+            }
+            else
+            {
+                flipping = false;
+            }
         } else
         {
-            flipping = false;
+            Stop();
         }
     }
 
@@ -164,7 +170,6 @@ public class DieController : MonoBehaviour
     private int FindFaceUp()
     {
         ConfigureSides();
-
         float min = 90;
         int result = 0;
 
@@ -229,10 +234,12 @@ public class DieController : MonoBehaviour
     }
     public void Stop()
     {
+        print("stop");
         StopAllCoroutines();
         Transform rotator = GameObject.Find("Camera Rotator").transform;
         transform.position = new Vector3(((int)transform.position.x) + 0.5f, ((int)transform.position.y) + 0.5f, ((int)transform.position.z) + 0.5f);
         rotator.eulerAngles = new Vector3((int)rotator.eulerAngles.x, (int)rotator.eulerAngles.y, (int)rotator.eulerAngles.z);
         flipping = false;
+        CorrectPosition();
     }
 }
